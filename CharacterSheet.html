@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Eastview Charter School Character Sheet</title>
+</head>
+
+<body>
+    <form id="CInfo" onsubmit="return CreateCharacterArray(event)" style="display: block;">
+        <fieldset>
+            <label for="CName">Character Name:</label>
+            <input id="CName" type="text">
+            <br>
+            <label for="Age">Age:</label>
+            <input id="Age" min="18" value="18" max="100" type="number">
+            <label for="Race">Race:</label>
+            <select id="Race">
+                <option>Select</option>
+                <option value="vessel">Divine Vessel</option>
+                <option value="vessel">Depraved Vessel</option>
+                <option value="fey">Fey</option>
+                <option value="vampire">Vampire</option>
+                <option value="werewolf">Werewolf</option>
+                <option value="witch">Witch</option>
+            </select>
+            <label for="Seed">Seed:</label>
+            <select id="Seed">
+                <option>Select</option>
+                <option value="The Ace">The Ace</option>
+                <option value="The Outlier">The Outlier</option>
+                <option value="The Seductor">The Seductor</option>
+                <option value="The Honor Student">The Honor Student</option>
+                <option value="The Flame">The Flame</option>
+                <option value="The Conspirator">The Conspirator</option>
+                <option value="The Weaver">The Weaver</option>
+            </select>
+            <br>
+            <input type="submit" value="Submit">
+        </fieldset>
+    </form>
+    <div id="Sheet">
+        <form id="StatForm" onsubmit="return CreateStatWindow(event)">
+            <input id="StatSubmit" type="submit" value="Submit" style="display: none;">
+        </form>
+    </div>
+</body>
+<style>
+    #CName,
+    #Age,
+    #Seed {
+        margin: .5rem;
+    }
+    #Stats{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 200px;
+        width: 400px;
+    }
+</style>
+<script>
+    //keeping all static arrays and objects here.
+    const TheAce1 = { dance: 2, charm: 1, power: 0, puzzle: 1, hunt: -1 };
+    const TheAce2 = { dance: 1, charm: 2, power: -1, puzzle: 1, hunt: 0 };
+    const Outlier1 = { dance: 0, charm: 1, power: -1, puzzle: 2, hunt: 1 };
+    const Outlier2 = { dance: 1, charm: 0, power: -1, puzzle: 1, hunt: 2 };
+    const Seductor1 = { dance: 1, charm: 2, power: 1, puzzle: 0, hunt: -1 };
+    const Seductor2 = { dance: 1, charm: 2, power: -1, puzzle: 1, hunt: 0 };
+    const Honor1 = { dance: 1, charm: -1, power: 0, puzzle: 2, hunt: 1 };
+    const Honor2 = { dance: 1, charm: 0, power: -1, puzzle: 1, hunt: 2 };
+    const Flame1 = { dance: 1, charm: 1, power: 2, puzzle: 0, hunt: -1 };
+    const Flame2 = { dance: 2, charm: 1, power: 1, puzzle: -1, hunt: 0 };
+    const Conspirator1 = { dance: 1, charm: -1, power: 0, puzzle: 1, hunt: 2 };
+    const Conspirator2 = { dance: 1, charm: 2, power: -1, puzzle: 1, hunt: 0 };
+    const Weaver1 = { dance: 1, charm: 1, power: 0, puzzle: 2, hunt: -1 };
+    const Weaver2 = { dance: 1, charm: 2, power: 0, puzzle: 1, hunt: -1 };
+    const vampire = {race: 'vampire', move: "Vapirical Starvation", mdes: "Going without blood for too long sends you into a frenzy. +2 on a power role and give everyone around you a string, or take a point of despair", stat: "dance" };
+    const vessel = {race: 'vessel', move: "Why go to Therapy When This is Free", mdes: "Once per day you can help someone on a charm or puzzle roll if you have a string on them. Your target will gain +2 on their roll", stat: "charm"};
+    const fey = {race: 'fey', move: "It's a Fey Thing", mdes: "You can lie about your strange behaviour claiming it to be a cultural thing, since people don't know any better (+2 on a charm roll). However, give a string to your target, and if they find out you're lying take a point of despair", stat: "dance"};
+    const witch = {race: 'witch', move: "I Put a Spell On You", mdes: "Knowing all those spells must really do wonders to your vocabulary. +1 on charm rolls persuading someone to do something in exchange for giving your target a string on you.", stat: "puzzle"};
+    const werewolf = {race: 'werewolf', move: "A Hound's Nose", mdes: "Is heightened sense of smell actually a trait of werewolves or were you just comically belssed? Who knows, but it sure is embarrasing to be treated like a hunting dog. +2 on hunt rolls in exchange for a point of despair or giving a string to everyone around you.", stat: "power"};
+
+
+    const RaceArray = [vessel, fey, vampire, werewolf, witch];
+
+    const characterArray = { name: "", age: "", race: "", seed: "", opt1: TheAce1, opt2: TheAce2  };
+
+    //end of static arrays and objects, start of functions.
+
+    //assigns values from the first form to the character array
+    function CreateCharacterArray(event) {
+        document.getElementById('CInfo').style.display = 'none';
+
+        const characterName = document.getElementById('CName').value;
+        const age = document.getElementById('Age').value;
+        const race = document.getElementById('Race').value;
+        const seed = document.getElementById('Seed').value;
+        characterArray.name = characterName;
+        characterArray.age = age;
+        characterArray.race = race;
+        characterArray.seed = seed;
+        console.log(characterArray);
+
+        DisplayCharacterStats(characterArray);
+        event.preventDefault();
+    }
+
+    //lets user pick between the two stat options that they have depending on thier seed choice.
+    function DisplayCharacterStats(Arr) {
+        const box = document.getElementById('Sheet');
+        const name = document.createElement('p');
+        const nameval = document.createElement('span');
+        name.textContent = 'Name: ';
+        nameval.textContent = Arr.name;
+        name.appendChild(nameval);
+        box.appendChild(name);
+
+        const age = document.createElement('p');
+        const ageval = document.createElement('span');
+        age.textContent = 'Age: ';
+        ageval.textContent = Arr.age;
+        age.appendChild(ageval);
+        box.appendChild(age);
+
+        const racep = document.createElement('p');
+        const raceval = document.createElement('span');
+        racep.textContent = 'Race: ';
+        raceval.textContent = Arr.race;
+        racep.appendChild(raceval);
+        box.appendChild(racep);
+
+        const seed = document.createElement('p');
+        const seedval = document.createElement('span');
+        seed.textContent = 'Seed: ';
+        seedval.textContent = Arr.seed;
+        seed.appendChild(seedval);
+        box.appendChild(seed);
+
+        //Create the form for them to pick thier stats remember to include the race modifier.
+        //race modifier declarations
+        const race = characterArray.race;
+        const racestats = RaceArray.find(race => race.race === Arr.race);
+        const racestat = racestats.stat;
+
+        const statform = document.getElementById('StatForm');
+        const label = document.createElement('p');
+        const opt1 = document.createElement("input");
+        const br = document.createElement('br');
+        opt1.id = 'opt1';
+        opt1.name = 'opt';
+        opt1.type = 'radio';
+        opt1.value = 'opt1';
+        const opt2 = document.createElement("input");
+        opt2.id = 'opt2';
+        opt2.name = 'opt';
+        opt2.type = 'radio';
+        opt2.value = 'opt2';
+        label.textContent = 'Pick your stats (Your race modifier of ' + racestat +' +1 will be added automatically): ';
+        const opt1Label = document.createElement("label");
+        opt1Label.for = 'opt1';
+        const opt2Label = document.createElement("label");
+        opt2Label.for = 'opt2';
+
+        const statsubmit = document.getElementById("StatSubmit");
+        statsubmit.style = "";
+
+
+        box.appendChild(statform);
+        statform.appendChild(label);
+        statform.appendChild(opt1);
+        statform.appendChild(opt1Label);
+        statform.appendChild(br);
+        statform.appendChild(opt2);
+        statform.appendChild(opt2Label);
+
+
+        if (Arr.seed == 'The Ace') {
+            TheAce1[racestat] = TheAce1[racestat] + 1;
+            TheAce2[racestat] = TheAce2[racestat] + 1;
+            const Arr1 = TheAce1;
+            const Arr2 = TheAce2;
+            opt1Label.textContent = 'Dance: ' + Arr1.dance + ' Charm: ' + Arr1.charm + ' Power: ' + Arr1.power + ' Puzzle: ' + Arr1.puzzle + ' Hunt: ' + Arr1.hunt;
+            opt2Label.textContent = 'Dance: ' + Arr2.dance + ' Charm: ' + Arr2.charm + ' Power: ' + Arr2.power + ' Puzzle: ' + Arr2.puzzle + ' Hunt: ' + Arr2.hunt;
+            event.preventDefault();
+        } else if (Arr.seed == 'The Outlier') {
+            Outlier1[racestat] = Outlier1[racestat] + 1;
+            Outlier2[racestat] = Outlier2[racestat] + 1;
+            const Arr1 = Outlier1;
+            Arr.opt1 = Outlier1;
+            const Arr2 = Outlier2;
+            Arr.opt2 = Outlier2;
+            opt1Label.textContent = 'Dance: ' + Arr1.dance + ' Charm: ' + Arr1.charm + ' Power: ' + Arr1.power + ' Puzzle: ' + Arr1.puzzle + ' Hunt: ' + Arr1.hunt;
+            opt2Label.textContent = 'Dance: ' + Arr2.dance + ' Charm: ' + Arr2.charm + ' Power: ' + Arr2.power + ' Puzzle: ' + Arr2.puzzle + ' Hunt: ' + Arr2.hunt;
+            event.preventDefault();
+        } else if (Arr.seed == 'The Seductor') {
+            Seductor1[racestat] = Seductor1[racestat] + 1;
+            Seductor2[racestat] = Seductor2[racestat] + 1;
+            const Arr1 = Seductor1;
+            Arr.opt1 = Seductor1;
+            const Arr2 = Seductor2;
+            Arr.opt2 = Seductor2;
+            opt1Label.textContent = 'Dance: ' + Arr1.dance + ' Charm: ' + Arr1.charm + ' Power: ' + Arr1.power + ' Puzzle: ' + Arr1.puzzle + ' Hunt: ' + Arr1.hunt;
+            opt2Label.textContent = 'Dance: ' + Arr2.dance + ' Charm: ' + Arr2.charm + ' Power: ' + Arr2.power + ' Puzzle: ' + Arr2.puzzle + ' Hunt: ' + Arr2.hunt;
+            event.preventDefault();
+        } else if (Arr.seed == 'The Honor Student') {
+            Honor1[racestat] = Honor1[racestat] + 1;
+            Honor2[racestat] = Honor2[racestat] + 1;
+            const Arr1 = Honor1;
+            Arr.opt1 = Honor1;
+            const Arr2 = Honor2;
+            Arr.opt2 = Honor2;
+            opt1Label.textContent = 'Dance: ' + Arr1.dance + ' Charm: ' + Arr1.charm + ' Power: ' + Arr1.power + ' Puzzle: ' + Arr1.puzzle + ' Hunt: ' + Arr1.hunt;
+            opt2Label.textContent = 'Dance: ' + Arr2.dance + ' Charm: ' + Arr2.charm + ' Power: ' + Arr2.power + ' Puzzle: ' + Arr2.puzzle + ' Hunt: ' + Arr2.hunt;
+            event.preventDefault();
+        } else if (Arr.seed == 'The Flame') {
+            Flame1[racestat] = Flame1[racestat] + 1;
+            Flame2[racestat] = Flame2[racestat] + 1;
+            const Arr1 = Flame1;
+            Arr.opt1 = Flame1;
+            const Arr2 = Flame2;
+            Arr.opt2 = Flame2;
+            opt1Label.textContent = 'Dance: ' + Arr1.dance + ' Charm: ' + Arr1.charm + ' Power: ' + Arr1.power + ' Puzzle: ' + Arr1.puzzle + ' Hunt: ' + Arr1.hunt;
+            opt2Label.textContent = 'Dance: ' + Arr2.dance + ' Charm: ' + Arr2.charm + ' Power: ' + Arr2.power + ' Puzzle: ' + Arr2.puzzle + ' Hunt: ' + Arr2.hunt;
+            event.preventDefault();
+        } else if (Arr.seed == 'The Conspirator') {
+            Conspirator1[racestat] = Conspirator1[racestat] + 1;
+            Conspirator2[racestat] = Conspirator2[racestat] + 1;
+            const Arr1 = Conspirator1;
+            Arr.opt1 = Conspirator1;
+            const Arr2 = Conspirator2;
+            Arr.opt2 = Conspirator2;
+            opt1Label.textContent = 'Dance: ' + Arr1.dance + ' Charm: ' + Arr1.charm + ' Power: ' + Arr1.power + ' Puzzle: ' + Arr1.puzzle + ' Hunt: ' + Arr1.hunt;
+            opt2Label.textContent = 'Dance: ' + Arr2.dance + ' Charm: ' + Arr2.charm + ' Power: ' + Arr2.power + ' Puzzle: ' + Arr2.puzzle + ' Hunt: ' + Arr2.hunt;
+            event.preventDefault();
+        } else if (Arr.seed == 'The Weaver') {
+            Weaver1[racestat] = Weaver1[racestat] + 1;
+            Weaver2[racestat] = Weaver2[racestat] + 1;
+            const Arr1 = Weaver1;
+            Arr.opt1 = Weaver1;
+            const Arr2 = Weaver2;
+            Arr.opt2 = Weaver2;
+            opt1Label.textContent = 'Dance: ' + Arr1.dance + ' Charm: ' + Arr1.charm + ' Power: ' + Arr1.power + ' Puzzle: ' + Arr1.puzzle + ' Hunt: ' + Arr1.hunt;
+            opt2Label.textContent = 'Dance: ' + Arr2.dance + ' Charm: ' + Arr2.charm + ' Power: ' + Arr2.power + ' Puzzle: ' + Arr2.puzzle + ' Hunt: ' + Arr2.hunt;
+            event.preventDefault();
+        }
+
+        event.preventDefault();
+    }
+    function CreateStatWindow(event) {
+    const stats = document.createElement('div');
+    stats.id = "Stats";
+    document.getElementById('Sheet').appendChild(stats);
+    document.getElementById('StatForm').style.display = 'none';
+
+    // Check if an option is selected before proceeding
+    const selectedOption = event.target.querySelector('input[name="opt"]:checked');
+    if (selectedOption) {
+        const choice = selectedOption.value;
+
+        stats.innerHTML = '';
+
+        const Arr = characterArray[choice];
+
+        for (const stat in Arr) {
+            if (Arr.hasOwnProperty(stat)) {
+                const div = document.createElement('div');
+                div.textContent = ` ${stat}: ${Arr[stat]} `;
+                stats.appendChild(div);
+            }
+        }
+    } else {
+        console.error("No option selected");
+        // Handle the error or provide a default behavior
+    }
+
+    event.preventDefault();
+}
+
+
+    event.preventDefault();
+</script>
